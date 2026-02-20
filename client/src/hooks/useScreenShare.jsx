@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 function useScreenShare() {
     const [stream, setStream] = useState(null);
     const [status, setStatus] = useState('idle')
-    const [metaData, setMetaData] = useState(null)
+    const [metadata, setMetadata] = useState(null)
+
+
     const startCapture = async () => {
         setStatus('requesting')
         try {
@@ -14,7 +16,7 @@ function useScreenShare() {
             const track = mediaStream.getVideoTracks()[0];
             const settings = track.getSettings();
 
-            setMetaData({
+            setMetadata({
                 width: settings.width,
                 height: settings.height,
                 displaySurface: settings.displaySurface
@@ -36,6 +38,11 @@ function useScreenShare() {
             }
         }
     }
+    const stopCapture = useCallback(() => {
+        cleanup(stream);
+        setStream(null);
+        setStatus('idle');
+    }, [stream]);
     const cleanup = (mediaStream) => {
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop())
@@ -49,7 +56,7 @@ function useScreenShare() {
         };
     }, [stream]); // Runs whenever the stream changes or unmounts
 
-    return { stream, status, startCapture,metaData }
+    return { stream, status, startCapture, metadata, stopCapture }
 }
 
 export default useScreenShare
