@@ -136,7 +136,7 @@ function ScreenTest() {
           </div>
 
           <h1 className="heading">
-            Ready to present?
+            Ready to share?
           </h1>
 
           <p className="description">
@@ -147,7 +147,7 @@ function ScreenTest() {
             onClick={startCapture}
             variant="primary"
           >
-            Start Presenting
+            Start Screen Share
           </Button>
         </div>
       )}

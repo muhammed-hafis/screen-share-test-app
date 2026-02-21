@@ -28,7 +28,7 @@ function Home() {
         </h1>
 
         <p className="description">
-          Check your hardware and connection before you start presenting.
+          Check your hardware and connection before you start sharing.
         </p>
 
         {isSupported ? (
