@@ -44,10 +44,19 @@ User clicks 'Start Screen Share' → Browser permission prompt → User selects 
 
 ## 📸 Screenshots
 
-> _Add your own screenshots here. Example placeholders below:_
+### 🏠 Home Page & Screen Picker
 
-![Home Page](./client/public/screenshots/home.png)
-![Screen Sharing Active](./client/public/screenshots/screen-sharing.png)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fd54d53e-de14-45ce-bdc1-c73be45ad350" width="48%" />
+  <img src="https://github.com/user-attachments/assets/51005a34-48f3-4290-b8fe-479dd86bdc49" width="48%" />
+</p>
+
+### 🖥️ Live Window
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/606274e5-6fbb-47b5-83fb-fe84c1e22305" width="70%" />
+</p>
+
 
 ---
 
