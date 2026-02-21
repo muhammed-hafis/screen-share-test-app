@@ -1,62 +1,85 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 function useScreenShare() {
     const [stream, setStream] = useState(null);
-    const [status, setStatus] = useState('idle')
-    const [metadata, setMetadata] = useState(null)
+    const [status, setStatus] = useState('idle');
+    const [metadata, setMetadata] = useState(null);
 
+    const streamRef = useRef(null);
 
-    const startCapture = async () => {
-        setStatus('requesting')
+    const cleanup = useCallback((mediaStream) => {
+        if (mediaStream) {
+            mediaStream.getTracks().forEach((track) => track.stop());
+        }
+    }, []);
+
+    const startCapture = useCallback(async () => {
+        setStatus('requesting');
+
         try {
             const mediaStream = await navigator.mediaDevices.getDisplayMedia({
-                video: { frameRate: { ideal: 30 } },
-                audio: false
-            })
+                video: {
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 30 }
+                },
+                audio: false,
+            });
+
             const track = mediaStream.getVideoTracks()[0];
             const settings = track.getSettings();
 
             setMetadata({
                 width: settings.width,
                 height: settings.height,
-                displaySurface: settings.displaySurface
-            })
+                displaySurface: settings.displaySurface,
+            });
+
             track.onended = () => {
                 cleanup(mediaStream);
-                setStream(null),
-                    setStatus('stopeed')
+                setStream(null);
+                setStatus('stopped'); 
             };
+
             setStream(mediaStream);
-            setStatus('granted')
+            streamRef.current = mediaStream;
+            setStatus('granted');
+
         } catch (error) {
-            if (error.name === 'NotAllowedError') {
-                setStatus('denied');
-            } else if (error.name === 'NotFoundError') {
-                setStatus('cancelled');
-            } else {
-                setStatus('error'); // Set to a string status for consistency
-            }
+            const errorMap = {
+                NotAllowedError: 'denied',
+                AbortError: 'cancelled',
+                NotFoundError: 'cancelled',
+            };
+
+            setStatus(errorMap[error.name] || 'error');
         }
-    }
+    }, [cleanup]);
+
     const stopCapture = useCallback(() => {
-        cleanup(stream);
-        setStream(null);
-        setStatus('idle');
-    }, [stream]);
-    const cleanup = (mediaStream) => {
-        if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop())
+        if (streamRef.current) {
+            cleanup(streamRef.current);
+            streamRef.current = null;
         }
-    }
+        setStream(null);
+        setStatus('stopped');
+    }, [cleanup]);
 
     useEffect(() => {
-        // This return function runs when the component unmounts
         return () => {
-            cleanup(stream);
+            if (streamRef.current) {
+                cleanup(streamRef.current);
+            }
         };
-    }, [stream]); // Runs whenever the stream changes or unmounts
+    }, [cleanup]);
 
-    return { stream, status, startCapture, metadata, stopCapture }
+    return {
+        stream,
+        status,
+        metadata,
+        startCapture,
+        stopCapture,
+    };
 }
 
-export default useScreenShare
+export default useScreenShare;

@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@layer components {
+    .icon-wrapper {
+        @apply w-20 h-20 mx-auto rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center shadow-md;
+    }
+
+    .icon {
+        @apply w-10 h-10 text-white/70;
+    }
+
+    .heading {
+        @apply text-3xl sm:text-4xl font-semibold tracking-tight text-white/70;
+    }
+
+    .description {
+        @apply text-neutral-400 text-lg leading-relaxed;
+    }
+
+}
